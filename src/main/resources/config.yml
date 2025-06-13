@@ -1,0 +1,35 @@
+clear-interval:
+  timer: 300 # seconds
+  broadcast: '&a&lLagSuite &8| &aCleared items/entities successfully.'
+  types:
+    items: true
+    entities: true
+  intervals:
+    - '60:msg:&a&lCLEARING &8| &7Clearing items/entities in &a60 &7seconds!'
+    - '30:msg:&a&lCLEARING &8| &7Clearing items/entities in &a30 &7seconds!'
+    - '3:msg:&a&lCLEARING &8| &7Clearing items/entities in &a3 &7seconds!'
+    - '2:msg:&a&lCLEARING &8| &7Clearing items/entities in &a2 &7seconds!'
+    - '1:msg:&a&lCLEARING &8| &7Clearing items/entities in &a1 &7seconds!'
+clear-exempt:
+  named: true
+  entities:
+    - ARMOR_STAND
+    - HORSE
+    - VILLAGER
+  dropped-items: [] # remove the [] when making a list of dropped items to exempt.
+    #- DIAMOND
+    #- NETHERITE_INGOT
+  clear-arrows-on-ground: true # set false to stop arrows from getting cleared in a dropped items clear.
+chunk-limiter:
+  bypass-permission: true # if true, the player will need permission to bypass chunk limits. (lagsuite.bypass.chunklimits)
+  blocks:
+    HOPPER: 15
+    REDSTONE_BLOCK: 128
+language:
+  reload: '&a&lLagSuite &8| &7Reloaded Plugin.'
+  unknown: '&cUnknown subcommand. Type /lagsuite for help.'
+  cleared: '&a&lLagSuite &8| &7Cleared &a{amount} &7entities.'
+  cleared-items: '&a&lLagSuite &8| &7Cleared &a{amount} &7items.'
+  tps: '&a&lLagSuite &8| &7Current TPS: &a{tps}'
+  largest-chunks-header: '&aTop 5 laggiest chunks (by entity count):'
+  max-limit-chunk-blocks: '&a&lLagSuite &8| &cMax placement for block {block} reached in this chunk.'
