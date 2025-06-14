@@ -12,12 +12,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.scape.project.lagSuite.utils.Utils.msgPlayer;
 
 public class ClearManager {
 
@@ -96,13 +99,15 @@ public class ClearManager {
         boolean clearArrows = config.getBoolean("clear-exempt.clear-arrows-on-ground", false);
         boolean named = config.getBoolean("clear-exempt.named", false);
 
+        boolean disable_interval_message_console = config.getBoolean("clear-exempt.disable-interval-message-console");
+
         Map<Integer, String> intervalMessages = new HashMap<>();
         for (String entry : intervalList) {
             try {
                 String[] parts = entry.split(":", 3);
                 int secondsBefore = Integer.parseInt(parts[0]);
                 if (parts.length == 3 && parts[1].equalsIgnoreCase("msg")) {
-                    intervalMessages.put(secondsBefore, ChatColor.translateAlternateColorCodes('&', parts[2]));
+                    intervalMessages.put(secondsBefore, parts[2]);
                 }
             } catch (Exception e) {
                 Bukkit.getLogger().warning("Invalid interval entry in config: " + entry);
@@ -118,7 +123,13 @@ public class ClearManager {
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(LagSuite.getInstance(), () -> {
 
             if (intervalMessages.containsKey(secondsUntilClear)) {
-                Bukkit.broadcastMessage(intervalMessages.get(secondsUntilClear));
+                if (!disable_interval_message_console) {
+                    Bukkit.broadcastMessage(Utils.format(intervalMessages.get(secondsUntilClear)));
+                } else {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        msgPlayer(player, intervalMessages.get(secondsUntilClear));
+                    }
+                }
             }
 
             if (secondsUntilClear <= 0) {

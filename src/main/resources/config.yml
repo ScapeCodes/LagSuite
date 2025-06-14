@@ -4,6 +4,7 @@ clear-interval:
   types:
     items: true
     entities: true
+  disable-interval-message-console: true # set true if you want to stop intervals from being displayed in console.
   intervals:
     - '60:msg:&a&lCLEARING &8| &7Clearing items/entities in &a60 &7seconds!'
     - '30:msg:&a&lCLEARING &8| &7Clearing items/entities in &a30 &7seconds!'
@@ -27,6 +28,7 @@ chunk-limiter:
     REDSTONE_BLOCK: 128
 language:
   reload: '&a&lLagSuite &8| &7Reloaded Plugin.'
+  no-perm: '&a&lLagSuite &8| &cNo permission to use theses commands!'
   unknown: '&cUnknown subcommand. Type /lagsuite for help.'
   cleared: '&a&lLagSuite &8| &7Cleared &a{amount} &7entities.'
   cleared-items: '&a&lLagSuite &8| &7Cleared &a{amount} &7items.'

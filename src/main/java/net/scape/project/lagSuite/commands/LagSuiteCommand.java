@@ -30,6 +30,11 @@ public class LagSuiteCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (!sender.hasPermission("lagsuite.commands")) {
+            Utils.msgPlayerConfig(sender, "no-perm");
+        }
+
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(ChatColor.YELLOW + "LagSuite Commands:");
             sender.sendMessage(ChatColor.GREEN + "/lagsuite clear" + ChatColor.GRAY + " - Clear ground items/entities.");
