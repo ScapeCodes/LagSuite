@@ -99,7 +99,7 @@ public class ClearManager {
         boolean clearArrows = config.getBoolean("clear-exempt.clear-arrows-on-ground", false);
         boolean named = config.getBoolean("clear-exempt.named", false);
 
-        boolean disable_interval_message_console = config.getBoolean("clear-exempt.disable-interval-message-console");
+        boolean disable_interval_message_console = config.getBoolean("clear-interval.disable-interval-message-console");
 
         Map<Integer, String> intervalMessages = new HashMap<>();
         for (String entry : intervalList) {
@@ -123,12 +123,15 @@ public class ClearManager {
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(LagSuite.getInstance(), () -> {
 
             if (intervalMessages.containsKey(secondsUntilClear)) {
-                if (!disable_interval_message_console) {
-                    Bukkit.broadcastMessage(Utils.format(intervalMessages.get(secondsUntilClear)));
-                } else {
+                String message = Utils.format(intervalMessages.get(secondsUntilClear));
+
+                if (disable_interval_message_console) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        msgPlayer(player, intervalMessages.get(secondsUntilClear));
+                        msgPlayer(player, message);
                     }
+                } else {
+                    Bukkit.getOnlinePlayers().forEach(player -> msgPlayer(player, message));
+                    Bukkit.getConsoleSender().sendMessage(message);
                 }
             }
 
