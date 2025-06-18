@@ -9,10 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,6 +23,8 @@ public class ClearManager {
 
     private int secondsUntilClear = -1;
     private int taskId = -1; // Store the task ID for cancellation
+
+    private Object taskHandle = null;
 
     public void clearEntities(@Nullable CommandSender player, List<World> worlds) {
         FileConfiguration config = LagSuite.getInstance().getConfig();
@@ -89,16 +88,13 @@ public class ClearManager {
         String broadcastMsg = config.getString("clear-interval.broadcast", "&a&lLagSuite &8&l> &aCleared items/entities successfully.");
         List<String> intervalList = config.getStringList("clear-interval.intervals");
 
-        // Clear types
         boolean clearItems = config.getBoolean("clear-interval.types.items", true);
         boolean clearEntities = config.getBoolean("clear-interval.types.entities", true);
 
-        // Exemptions
         List<String> exemptItems = config.getStringList("clear-exempt.dropped-items");
         List<String> exemptEntities = config.getStringList("clear-exempt.entities");
         boolean clearArrows = config.getBoolean("clear-exempt.clear-arrows-on-ground", false);
         boolean named = config.getBoolean("clear-exempt.named", false);
-
         boolean disable_interval_message_console = config.getBoolean("clear-interval.disable-interval-message-console");
 
         Map<Integer, String> intervalMessages = new HashMap<>();
@@ -116,11 +112,11 @@ public class ClearManager {
 
         secondsUntilClear = timer;
 
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
+        if (taskHandle != null) {
+            SchedulerAdapter.cancelTask(taskHandle);
         }
 
-        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(LagSuite.getInstance(), () -> {
+        taskHandle = SchedulerAdapter.runSyncRepeating(LagSuite.getInstance(), () -> {
 
             if (intervalMessages.containsKey(secondsUntilClear)) {
                 String message = Utils.format(intervalMessages.get(secondsUntilClear));
@@ -140,7 +136,6 @@ public class ClearManager {
 
                 for (World world : Bukkit.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
-
                         if (clearItems && entity instanceof Item item) {
                             Material material = item.getItemStack().getType();
                             if (!exemptItems.contains(material.name())) {
@@ -148,7 +143,7 @@ public class ClearManager {
                             }
                         }
 
-                        if (clearItems && clearArrows && entity instanceof org.bukkit.entity.Arrow arrow && arrow.isInBlock()) {
+                        if (clearItems && clearArrows && entity instanceof Arrow arrow && arrow.isInBlock()) {
                             toClear.add(entity);
                         }
 
@@ -190,7 +185,8 @@ public class ClearManager {
 
     public void clearTask() {
         secondsUntilClear = -1;
-        Bukkit.getServer().getScheduler().cancelTask(taskId);
+        SchedulerAdapter.cancelTask(taskHandle);
+        taskHandle = null;
     }
 
     public int getSecondsUntilClear() {

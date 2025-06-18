@@ -3,6 +3,9 @@ package net.scape.project.lagSuite.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.bukkit.scheduler.BukkitTask;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+
 public class SchedulerAdapter {
 
     private static final boolean IS_FOLIA;
@@ -35,11 +38,21 @@ public class SchedulerAdapter {
         }
     }
 
-    public static void runSyncRepeating(JavaPlugin plugin, Runnable task, long initialDelay, long period) {
+    public static Object runSyncRepeating(JavaPlugin plugin, Runnable task, long initialDelay, long period) {
         if (IS_FOLIA) {
-            Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, scheduledTask -> task.run(), initialDelay, period);
+            return Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, scheduledTask -> task.run(), initialDelay, period);
         } else {
-            Bukkit.getScheduler().runTaskTimer(plugin, task, initialDelay, period);
+            return Bukkit.getScheduler().runTaskTimer(plugin, task, initialDelay, period);
+        }
+    }
+
+    public static void cancelTask(Object task) {
+        if (task == null) return;
+
+        if (IS_FOLIA && task instanceof ScheduledTask foliaTask) {
+            foliaTask.cancel();
+        } else if (task instanceof BukkitTask bukkitTask) {
+            bukkitTask.cancel();
         }
     }
 }
