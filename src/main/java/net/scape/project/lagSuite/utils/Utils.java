@@ -124,6 +124,14 @@ public class Utils {
         player.sendMessage(format(lang));
     }
 
+    public static void msgPlayerConfig(CommandSender player, String valueLang, @Nullable String r1, @Nullable String r2, @Nullable String n1, @Nullable String n2) {
+        String lang = LagSuite.getInstance().getConfig().getString("language." + valueLang);
+        lang = lang.replace(r1, r2);
+        lang = lang.replace(n1, n2);
+        player.sendMessage(format(lang));
+    }
+
+
     public static void titlePlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         player.sendTitle(format(title), format(subtitle), fadeIn, stay, fadeOut);
     }

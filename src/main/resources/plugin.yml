@@ -1,9 +1,10 @@
 name: LagSuite
-version: '1.0.0'
+version: '${version}'
 main: net.scape.project.lagSuite.LagSuite
 api-version: '1.13'
 folia-supported: true
-
+softdepend:
+  - ProtocolLib
 commands:
   lagsuite:
     description: Base command for LagSuite

@@ -26,6 +26,29 @@ chunk-limiter:
   blocks:
     HOPPER: 15
     REDSTONE_BLOCK: 128
+performance-monitor:
+  enable: false # enable or disable the performance monitor
+  alert-ops: true # alert ops when tps is low.
+  cull-on-low-tps:
+    tps: 10 # when should auto cull kick in? min lowest tps point.
+    types:
+      items: true # clear items
+      entities: true # clear entities (does use "clear-exempt")
+    disable-drops: true # prevent players from dropping items if "tps" is low.
+    disable-mob-spawning: true # prevent mobs from spawning if "tps" is low.
+redstone-culler:
+  enabled: true # enable or disable the restone culler
+  update-threshold: 20
+  interval-ticks: 20 # in ticks (20 ticks = 1 second)
+  alert-ops: true
+# Client optimize features
+# Note: These features requires protocollib to be installed.
+client-optimizer:
+  enabled: true # enable or disable the client-side optimizer
+  suppress-particles: true # Suppress particle effects to reduce client lag
+  suppress-fireworks: true # Suppress firework spawn packets to improve performance
+  max-entities-visible: 50 # Maximum number of entities visible to each player
+  smooth-teleports: true # Allows the player to be invulnerable for a short time during teleportation
 language:
   reload: '&a&lLagSuite &8| &7Reloaded Plugin.'
   no-perm: '&a&lLagSuite &8| &cNo permission to use theses commands!'
@@ -35,3 +58,6 @@ language:
   tps: '&a&lLagSuite &8| &7Current TPS: &a{tps}'
   largest-chunks-header: '&aTop 5 laggiest chunks (by entity count):'
   max-limit-chunk-blocks: '&a&lLagSuite &8| &cMax placement for block {block} reached in this chunk.'
+  redstone-culled: '&a&lLagSuite &8| &cCulled redstone at &e%location%&c due to &e%count% updates/sec'
+  performance-tps-drop: '&a&lLagSuite &8| &c&lWarning: &cServer TPS low %tps%. Possible performance issues.'
+  temp-disable-item-drops: '&a&lLagSuite &8| &cItem drops are temporarily disabled due to server lag.'

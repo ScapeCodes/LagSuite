@@ -5,8 +5,7 @@ import net.scape.project.lagSuite.commands.LagSuiteTabCompleter;
 import net.scape.project.lagSuite.hooks.PAPI;
 import net.scape.project.lagSuite.listeners.ChunkLimiterListener;
 import net.scape.project.lagSuite.listeners.HaltListener;
-import net.scape.project.lagSuite.managers.ClearManager;
-import net.scape.project.lagSuite.managers.HaltManager;
+import net.scape.project.lagSuite.managers.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class LagSuite extends JavaPlugin {
@@ -14,7 +13,10 @@ public final class LagSuite extends JavaPlugin {
     private static LagSuite instance;
     private ClearManager clearManager;
     private HaltManager haltManager;
+    private RedstoneCullerManager redstoneCullerManager;
+    private ClientOptimizer clientOptimizer;
 
+    private PerformanceMonitor performanceMonitor;
     private boolean haltEnabled = false;
 
     @Override
@@ -25,8 +27,17 @@ public final class LagSuite extends JavaPlugin {
 
         clearManager = new ClearManager();
         clearManager.scheduleItemClearTask();
-
+        redstoneCullerManager = new RedstoneCullerManager();
+        redstoneCullerManager.scheduleTickingTask();
         haltManager = new HaltManager();
+
+        performanceMonitor = new PerformanceMonitor();
+        performanceMonitor.start();
+
+        if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
+            clientOptimizer = new ClientOptimizer();
+            getServer().getPluginManager().registerEvents(new ClientOptimizer(), this);
+        }
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PAPI().register();
@@ -48,7 +59,6 @@ public final class LagSuite extends JavaPlugin {
     }
 
     public void reload() {
-        /// reloading the config.yml
         super.reloadConfig();
 
         saveDefaultConfig();
@@ -57,6 +67,9 @@ public final class LagSuite extends JavaPlugin {
 
         clearManager.clearTask();
         clearManager.scheduleItemClearTask();
+
+        redstoneCullerManager.loadConfig();
+        performanceMonitor.loadConfig();
     }
 
     public ClearManager getClearManager() {
@@ -73,5 +86,17 @@ public final class LagSuite extends JavaPlugin {
 
     public HaltManager getHaltManager() {
         return haltManager;
+    }
+
+    public RedstoneCullerManager getRedstoneCullerManager() {
+        return redstoneCullerManager;
+    }
+
+    public ClientOptimizer getClientOptimizer() {
+        return clientOptimizer;
+    }
+
+    public PerformanceMonitor getPerformanceMonitor() {
+        return performanceMonitor;
     }
 }
